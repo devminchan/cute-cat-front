@@ -31,7 +31,8 @@
       "react/prefer-stateless-function": 0,
       "react/jsx-filename-extension": 0,
       "react/jsx-one-expression-per-line": 0,
-      "react/jsx-fragments": 0
+      "react/jsx-fragments": 0,
+      "jsx-a11y/anchor-is-valid": 0
     },
     "env": {
       "browser": true
