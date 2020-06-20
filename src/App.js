@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import Main from './pages/Main';
 import Register from './pages/Register';
+import Login from './pages/Login';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <SnackbarProvider maxSnack={3}>
         <BrowserRouter>
           <Switch>
+            <Route path="/login" component={Login} />
             <Route path="/register" component={Register} />
             <Route path="/" component={Main} />
           </Switch>

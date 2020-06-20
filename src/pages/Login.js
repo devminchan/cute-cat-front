@@ -41,7 +41,6 @@ export default function SignUp() {
 
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
-  const [repassword, setRepassword] = useState('');
 
   const { enqueueSnackbar } = useSnackbar(); // 알림창 띄우기위함
   const history = useHistory(); // 프로그래밍방식 라우팅을 위함
@@ -52,10 +51,6 @@ export default function SignUp() {
 
   const handleInputPassword = (event) => {
     setPassword(event.target.value);
-  };
-
-  const handleInputRepassword = (event) => {
-    setRepassword(event.target.value);
   };
 
   const showError = (message) => {
@@ -79,27 +74,31 @@ export default function SignUp() {
       return;
     }
 
-    if (!repassword || repassword.trim().length <= 0) {
-      showError('비밀번호 확인란이 비었습니다.');
-      return;
-    }
-
-    if (password !== repassword) {
-      showError('비밀번호와 비밀번호 확인 값이 다릅니다.');
-      return;
-    }
-
     try {
-      await axios.post('/users', {
-        userId,
-        password,
-      });
+      const { token } = (
+        await axios.post('/auth/login', {
+          userId,
+          password,
+        })
+      ).data;
+
+      localStorage.setItem('token', token);
+
+      axios.interceptors.request.use(
+        (config) => {
+          // eslint-disable-next-line no-param-reassign
+          config.headers.Authorization = `bearer ${token}`;
+          return config;
+        },
+        (error) => {
+          Promise.reject(error);
+        },
+      );
 
       setUserId('');
       setPassword('');
-      setRepassword('');
 
-      showSuccess('성공적으로 회원가입을 완료하였습니다.');
+      showSuccess('로그인 성공');
 
       history.push('/');
     } catch (error) {
@@ -125,7 +124,7 @@ export default function SignUp() {
           <Pets />
         </Avatar>
         <Typography component="h1" variant="h5">
-          회원가입
+          로그인
         </Typography>
         <form className={classes.form} noValidate>
           <Grid container spacing={2}>
@@ -156,20 +155,6 @@ export default function SignUp() {
                 value={password}
               />
             </Grid>
-            <Grid item xs={12}>
-              <TextField
-                variant="outlined"
-                required
-                fullWidth
-                name="password"
-                label="비밀번호 확인"
-                type="password"
-                id="password"
-                autoComplete="current-password"
-                onChange={handleInputRepassword}
-                value={repassword}
-              />
-            </Grid>
           </Grid>
           <Button
             type="submit"
@@ -179,13 +164,13 @@ export default function SignUp() {
             className={classes.submit}
             onClick={handleSubmit}
           >
-            가입 완료
+            로그인
           </Button>
           <Grid container justify="flex-end">
             <Grid item>
-              <Link href="/login" variant="body2">
-                이미 계정을 가지고 계시나요?{' '}
-                <span className={classes.loginSpan}>로그인하기</span>
+              <Link href="/register" variant="body2">
+                계정이 없으신가요?{' '}
+                <span className={classes.loginSpan}>회원가입</span>
               </Link>
             </Grid>
           </Grid>

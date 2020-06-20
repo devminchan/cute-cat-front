@@ -9,6 +9,6 @@ const token = localStorage.getItem(TOKEN_NAME);
 export default axios.create({
   baseURL: SERVER_URL,
   headers: {
-    Authorization: `Bearer ${token}`,
+    Authorization: `bearer ${token}`,
   },
 });
