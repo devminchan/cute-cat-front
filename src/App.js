@@ -1,17 +1,20 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { SnackbarProvider } from 'notistack';
 import Main from './pages/Main';
 import Register from './pages/Register';
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Switch>
-          <Route path="/register" component={Register} />
-          <Route path="/" component={Main} />
-        </Switch>
-      </BrowserRouter>
+      <SnackbarProvider maxSnack={3}>
+        <BrowserRouter>
+          <Switch>
+            <Route path="/register" component={Register} />
+            <Route path="/" component={Main} />
+          </Switch>
+        </BrowserRouter>
+      </SnackbarProvider>
     </div>
   );
 }

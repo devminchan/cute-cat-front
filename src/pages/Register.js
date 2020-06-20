@@ -9,6 +9,7 @@ import Pets from '@material-ui/icons/Pets';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import { useSnackbar } from 'notistack';
 import axios from '../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -41,46 +42,53 @@ export default function SignUp() {
   const [password, setPassword] = useState('');
   const [repassword, setRepassword] = useState('');
 
-  const handleInputUserId = (e) => {
-    setUserId(e.target.value);
+  const { enqueueSnackbar } = useSnackbar(); // 알림창 띄우기위함
+
+  const handleInputUserId = (event) => {
+    setUserId(event.target.value);
   };
 
-  const handleInputPassword = (e) => {
-    setPassword(e.target.value);
+  const handleInputPassword = (event) => {
+    setPassword(event.target.value);
   };
 
-  const handleInputRepassword = (e) => {
-    setRepassword(e.target.value);
+  const handleInputRepassword = (event) => {
+    setRepassword(event.target.value);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const showError = (message) => {
+    enqueueSnackbar(message, { variant: 'error' });
+  };
+
+  const showSuccess = (message) => {
+    enqueueSnackbar(message, { variant: 'success' });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
     if (!userId || userId.trim().length <= 0) {
-      // eslint-disable-next-line no-console
-      console.error('userId 비었음.');
+      showError('유저 아이디가 비었습니다.');
       return;
     }
 
     if (!password || password.trim().length <= 0) {
-      // eslint-disable-next-line no-console
-      console.error('password 비었음.');
+      showError('비밀번호가 비었습니다.');
       return;
     }
 
     if (!repassword || repassword.trim().length <= 0) {
-      // eslint-disable-next-line no-console
-      console.error('repassword 비었음.');
+      showError('비밀번호 확인란이 비었습니다.');
       return;
     }
 
     if (password !== repassword) {
-      // eslint-disable-next-line no-console
-      console.error('password와 repassword 불일치');
+      showError('비밀번호와 비밀번호 확인 값이 다릅니다.');
       return;
     }
 
     try {
+      // eslint-disable-next-line no-unused-vars
       const result = (
         await axios.post('/users', {
           userId,
@@ -88,15 +96,23 @@ export default function SignUp() {
         })
       ).data;
 
-      // eslint-disable-next-line no-console
-      console.log(result);
-
       setUserId('');
       setPassword('');
       setRepassword('');
+
+      showSuccess('성공적으로 회원가입을 완료하였습니다.');
     } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error);
+      if (error.response) {
+        const errMsg = error.response.data.message;
+
+        if (Array.isArray(errMsg)) {
+          showError(errMsg[0]);
+        } else {
+          showError(errMsg);
+        }
+      } else {
+        showError(error.message);
+      }
     }
   };
 
