@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router-dom';
 import axios from '../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,6 +44,7 @@ export default function SignUp() {
   const [repassword, setRepassword] = useState('');
 
   const { enqueueSnackbar } = useSnackbar(); // 알림창 띄우기위함
+  const history = useHistory(); // 프로그래밍방식 라우팅을 위함
 
   const handleInputUserId = (event) => {
     setUserId(event.target.value);
@@ -101,6 +103,8 @@ export default function SignUp() {
       setRepassword('');
 
       showSuccess('성공적으로 회원가입을 완료하였습니다.');
+
+      history.push('/');
     } catch (error) {
       if (error.response) {
         const errMsg = error.response.data.message;
@@ -138,6 +142,7 @@ export default function SignUp() {
                 name="id"
                 autoComplete="username"
                 onChange={handleInputUserId}
+                value={userId}
               />
             </Grid>
             <Grid item xs={12}>
@@ -151,6 +156,7 @@ export default function SignUp() {
                 id="password"
                 autoComplete="current-password"
                 onChange={handleInputPassword}
+                value={password}
               />
             </Grid>
             <Grid item xs={12}>
@@ -164,6 +170,7 @@ export default function SignUp() {
                 id="password"
                 autoComplete="current-password"
                 onChange={handleInputRepassword}
+                value={repassword}
               />
             </Grid>
           </Grid>
