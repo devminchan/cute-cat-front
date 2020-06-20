@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Fragment } from 'react';
+import React, { useState, useEffect, Fragment, useContext } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -15,6 +15,7 @@ import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import { useSnackbar } from 'notistack';
 import axios from '../utils/axios';
+import { UserContext } from '../context/UserProvider';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -49,12 +50,34 @@ export default function Main() {
   const classes = useStyles(); // css 설정 가져오기
   const [posts, setPosts] = useState([]); // CatPost 데이터
   const { enqueueSnackbar } = useSnackbar(); // 스낵바
+  const { setUserState } = useContext(UserContext); // 전역 유저 상태
 
   const showError = (message) => {
     enqueueSnackbar(message, { variant: 'error' });
   };
 
-  const processing = async () => {
+  const fetchUserInfo = async () => {
+    try {
+      const result = (await axios.get('/users/me')).data;
+      setUserState(result);
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status !== 401) {
+          const errMsg = error.response.data.message;
+
+          if (Array.isArray(errMsg)) {
+            showError(errMsg[0]);
+          } else {
+            showError(errMsg);
+          }
+        }
+      } else {
+        showError('유저 정보를 불러오는데 실패했습니다!');
+      }
+    }
+  };
+
+  const fetchCatPosts = async () => {
     try {
       const result = (await axios.get('/cat-posts')).data;
       setPosts(result);
@@ -71,6 +94,11 @@ export default function Main() {
         showError(error.message);
       }
     }
+  };
+
+  const processing = async () => {
+    fetchUserInfo();
+    fetchCatPosts();
   };
 
   // on create

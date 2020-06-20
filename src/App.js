@@ -4,19 +4,22 @@ import { SnackbarProvider } from 'notistack';
 import Main from './pages/Main';
 import Register from './pages/Register';
 import Login from './pages/Login';
+import UserProvider from './context/UserProvider';
 
 function App() {
   return (
     <div className="App">
-      <SnackbarProvider maxSnack={3}>
-        <BrowserRouter>
-          <Switch>
-            <Route path="/login" component={Login} />
-            <Route path="/register" component={Register} />
-            <Route path="/" component={Main} />
-          </Switch>
-        </BrowserRouter>
-      </SnackbarProvider>
+      <UserProvider>
+        <SnackbarProvider maxSnack={3}>
+          <BrowserRouter>
+            <Switch>
+              <Route path="/login" component={Login} />
+              <Route path="/register" component={Register} />
+              <Route path="/" component={Main} />
+            </Switch>
+          </BrowserRouter>
+        </SnackbarProvider>
+      </UserProvider>
     </div>
   );
 }
