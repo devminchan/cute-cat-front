@@ -11,6 +11,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Avatar from '@material-ui/core/Avatar';
+import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -35,12 +37,9 @@ const useStyles = makeStyles((theme) => ({
   cardMedia: {
     paddingTop: '56.25%', // 16:9
   },
-  cardContent: {
-    flexGrow: 1,
-  },
-  footer: {
-    backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(6),
+  cardAvator: {
+    width: theme.spacing(3),
+    height: theme.spacing(3),
   },
 }));
 
@@ -72,9 +71,19 @@ export default function Album() {
                     title="Image title"
                   />
                   <CardContent className={classes.cardContent}>
-                    <Typography gutterBottom variant="h5" component="h2">
-                      Heading
-                    </Typography>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      mb={2}
+                      fontWeight="fontWeightLight"
+                    >
+                      <Avatar
+                        alt="Cindy Baker"
+                        src="https://source.unsplash.com/random"
+                        className={classes.cardAvator}
+                      />
+                      <Box ml={1.2} mt={0.3}>devminchan</Box>
+                    </Box>
                     <Typography>
                       This is a media card. You can use this section to describe
                       the content.
