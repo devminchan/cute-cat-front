@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
+import { useSnackbar } from 'notistack';
 import axios from '../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
@@ -46,22 +47,28 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Main() {
   const classes = useStyles(); // css 설정 가져오기
+  const [posts, setPosts] = useState([]); // CatPost 데이터
+  const { enqueueSnackbar } = useSnackbar(); // 스낵바
 
-  const [posts, setPosts] = useState([]);
+  const showError = (message) => {
+    enqueueSnackbar(message, { variant: 'error' });
+  };
 
   const processing = async () => {
     try {
       const result = (await axios.get('/cat-posts')).data;
       setPosts(result);
-    } catch (e) {
-      if (e.response) {
-        // eslint-disable-next-line no-alert
-        alert(e.response.data.message);
+    } catch (error) {
+      if (error.response) {
+        const errMsg = error.response.data.message;
+
+        if (Array.isArray(errMsg)) {
+          showError(errMsg[0]);
+        } else {
+          showError(errMsg);
+        }
       } else {
-        // eslint-disable-next-line no-console
-        console.log('no response');
-        // eslint-disable-next-line no-alert
-        alert(e.message);
+        showError(error.message);
       }
     }
   };
