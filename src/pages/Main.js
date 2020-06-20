@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -13,6 +13,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
+import axios from '../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -43,13 +44,35 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+export default function Main() {
+  const classes = useStyles(); // css 설정 가져오기
 
-export default function Album() {
-  const classes = useStyles();
+  const [posts, setPosts] = useState([]);
+
+  const processing = async () => {
+    try {
+      const result = (await axios.get('/cat-posts')).data;
+      setPosts(result);
+    } catch (e) {
+      if (e.response) {
+        // eslint-disable-next-line no-alert
+        alert(e.response.data.message);
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('no response');
+        // eslint-disable-next-line no-alert
+        alert(e.message);
+      }
+    }
+  };
+
+  // on create
+  useEffect(() => {
+    processing();
+  }, []);
 
   return (
-    <fragment>
+    <Fragment>
       <CssBaseline />
       <AppBar position="relative">
         <Toolbar>
@@ -62,13 +85,13 @@ export default function Album() {
         <Container className={classes.cardGrid} maxWidth="md">
           {/* End hero unit */}
           <Grid container spacing={4}>
-            {cards.map((card) => (
-              <Grid item key={card} xs={12} sm={6} md={4}>
+            {posts.map((catPost) => (
+              <Grid item key={catPost.seqNo} xs={12} sm={6} md={4}>
                 <Card className={classes.card}>
                   <CardMedia
                     className={classes.cardMedia}
-                    image="https://source.unsplash.com/random"
-                    title="Image title"
+                    image={catPost.imageUrl}
+                    title="귀여운 고양이 사진입니다"
                   />
                   <CardContent className={classes.cardContent}>
                     <Box
@@ -78,16 +101,18 @@ export default function Album() {
                       fontWeight="fontWeightLight"
                     >
                       <Avatar
-                        alt="Cindy Baker"
-                        src="https://source.unsplash.com/random"
+                        alt={catPost.user.userId}
                         className={classes.cardAvator}
-                      />
-                      <Box ml={1.2} mt={0.3}>devminchan</Box>
+                      >
+                        {catPost.user.userId.length > 0
+                          ? catPost.user.userId[0]
+                          : 'unknown'}
+                      </Avatar>
+                      <Box ml={1.2} mt={0.3}>
+                        {catPost.user.userId}
+                      </Box>
                     </Box>
-                    <Typography>
-                      This is a media card. You can use this section to describe
-                      the content.
-                    </Typography>
+                    <Typography>{catPost.content}</Typography>
                   </CardContent>
                   <CardActions>
                     <Button size="small" color="primary">
@@ -103,6 +128,6 @@ export default function Album() {
           </Grid>
         </Container>
       </main>
-    </fragment>
+    </Fragment>
   );
 }
