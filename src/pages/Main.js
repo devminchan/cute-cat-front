@@ -17,7 +17,7 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Create';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
-import axios from '../utils/axios';
+import axios, { TOKEN_NAME } from '../utils/axios';
 import { UserContext } from '../context/UserProvider';
 import PostDialog from '../components/PostDialog';
 
@@ -146,7 +146,11 @@ export default function Main() {
   };
 
   const handleLogout = () => {
-    showError('로그아웃!');
+    localStorage.setItem(TOKEN_NAME, '');
+    showInfo('로그아웃되었습니다');
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1000);
   };
 
   const processing = async () => {

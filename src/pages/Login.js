@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
-import axios from '../utils/axios';
+import axios, { TOKEN_NAME } from '../utils/axios';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -82,7 +82,7 @@ export default function SignUp() {
         })
       ).data;
 
-      localStorage.setItem('token', token);
+      localStorage.setItem(TOKEN_NAME, token);
 
       axios.interceptors.request.use(
         (config) => {
