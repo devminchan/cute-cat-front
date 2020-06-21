@@ -13,6 +13,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Create';
 import { useSnackbar } from 'notistack';
 import axios from '../utils/axios';
 import { UserContext } from '../context/UserProvider';
@@ -44,6 +46,16 @@ const useStyles = makeStyles((theme) => ({
   cardAvator: {
     width: theme.spacing(3),
     height: theme.spacing(3),
+  },
+  extendedIcon: {
+    marginRight: theme.spacing(1),
+  },
+  fab: {
+    position: 'fixed',
+    right: 0,
+    bottom: 0,
+    marginBottom: theme.spacing(3),
+    marginRight: theme.spacing(4),
   },
 }));
 
@@ -180,6 +192,15 @@ export default function Main() {
             ))}
           </Grid>
         </Container>
+        <Fab
+          variant="extended"
+          color="primary"
+          aria-label="add"
+          className={classes.fab}
+        >
+          <AddIcon className={classes.extendedIcon} />
+          새 포스트 작성
+        </Fab>
       </main>
       {/* CatPost 생성/수정 시 폼 화면 */}
       <PostDialog
