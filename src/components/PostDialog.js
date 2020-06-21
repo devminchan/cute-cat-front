@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-// eslint-disable-next-line react/prop-types
 function PostDialog({ open, handleClose, catPost }) {
   const classes = useStyles();
 
@@ -64,22 +63,14 @@ function PostDialog({ open, handleClose, catPost }) {
   );
 
   const imageElement = catPost ? (
-    <img
-      alt="커여운 고양이"
-      // eslint-disable-next-line react/prop-types
-      src={catPost.imageUrl}
-      className={classes.image}
-    />
+    <img alt="커여운 고양이" src={catPost.imageUrl} className={classes.image} />
   ) : (
     <AddIcon className={classes.addIcon} style={{ color: grey[500] }} />
   );
 
   const contentElement = catPost ? (
     <DialogContentText className={classes.contentTextArea}>
-      {
-        // eslint-disable-next-line react/prop-types
-        catPost.content
-      }
+      {catPost.content}
     </DialogContentText>
   ) : (
     <TextField
