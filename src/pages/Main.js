@@ -16,6 +16,7 @@ import Box from '@material-ui/core/Box';
 import { useSnackbar } from 'notistack';
 import axios from '../utils/axios';
 import { UserContext } from '../context/UserProvider';
+import PostDialog from '../components/PostDialog';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
@@ -51,6 +52,8 @@ export default function Main() {
   const [posts, setPosts] = useState([]); // CatPost 데이터
   const { enqueueSnackbar } = useSnackbar(); // 스낵바
   const { setUserState } = useContext(UserContext); // 전역 유저 상태
+  const [dialogOpen, setDialogOpen] = useState(false); // PostDialog 열림/닫힘 상태 관리
+  const [selectedPost, setSelectedPost] = useState(null); // 현재 선택중인 post 관리
 
   const showError = (message) => {
     enqueueSnackbar(message, { variant: 'error' });
@@ -94,6 +97,15 @@ export default function Main() {
         showError(error.message);
       }
     }
+  };
+
+  const handleDialogOpen = (catPost) => {
+    setSelectedPost(catPost);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
   };
 
   const processing = async () => {
@@ -150,7 +162,13 @@ export default function Main() {
                     <Typography>{catPost.content}</Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small" color="primary">
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => {
+                        handleDialogOpen(catPost);
+                      }}
+                    >
                       View
                     </Button>
                     <Button size="small" color="primary">
@@ -163,6 +181,12 @@ export default function Main() {
           </Grid>
         </Container>
       </main>
+      {/* CatPost 생성/수정 시 폼 화면 */}
+      <PostDialog
+        open={dialogOpen}
+        handleClose={handleDialogClose}
+        catPost={selectedPost}
+      />
     </Fragment>
   );
 }
