@@ -116,8 +116,12 @@ export default function Main() {
     setDialogOpen(true);
   };
 
-  const handleDialogClose = () => {
+  const handleDialogClose = (catPost) => {
     setDialogOpen(false);
+
+    if (catPost) {
+      setPosts([...posts, catPost]); // Dialog를 통해 새로 생성된 포스트가 있으면 추가
+    }
   };
 
   const processing = async () => {

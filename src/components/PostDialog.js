@@ -81,7 +81,13 @@ function PostDialog({ open, handleClose, catPost }) {
       // showSuccess(result.imageUrl);
     } catch (error) {
       if (error.resposne) {
-        showError(error.response.data.message);
+        const errMsg = error.response.data.message;
+
+        if (Array.isArray(errMsg)) {
+          showError(errMsg[0]);
+        } else {
+          showError(errMsg);
+        }
       } else {
         showError(error.message);
       }
@@ -90,6 +96,47 @@ function PostDialog({ open, handleClose, catPost }) {
 
   const handleFileSelect = () => {
     inputRef.current.click();
+  };
+
+  const handleInputContent = (e) => {
+    setContent(e.target.value);
+  };
+
+  const handleSubmit = async () => {
+    try {
+      if (!fileUrl || fileUrl.trim().length <= 0) {
+        showError('사진을 업로드해주세요.');
+        return;
+      }
+
+      if (!content || content.trim().length <= 0) {
+        showError('사진 설명을 추가해주세요.');
+        return;
+      }
+
+      // 포스트 생성
+      const newPost = (
+        await axios.post('/cat-posts', {
+          imageUrl: fileUrl,
+          content,
+        })
+      ).data;
+
+      showSuccess('업로드 성공');
+      handleClose(newPost);
+    } catch (e) {
+      if (e.response) {
+        const errMsg = e.response.data.message;
+
+        if (Array.isArray(errMsg)) {
+          showError(errMsg[0]);
+        } else {
+          showError(errMsg);
+        }
+      } else {
+        showError(e.message);
+      }
+    }
   };
 
   const titleElement = catPost ? (
@@ -144,6 +191,8 @@ function PostDialog({ open, handleClose, catPost }) {
       rows={4}
       placeholder="사진에 대한 설명을 해주세요!"
       className={classes.contentTextArea}
+      onChange={handleInputContent}
+      value={content}
     />
   );
 
@@ -162,10 +211,10 @@ function PostDialog({ open, handleClose, catPost }) {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
-          Cancel
+          취소
         </Button>
-        <Button onClick={handleClose} color="primary">
-          Subscribe
+        <Button onClick={handleSubmit} color="primary">
+          업로드
         </Button>
       </DialogActions>
     </Dialog>
