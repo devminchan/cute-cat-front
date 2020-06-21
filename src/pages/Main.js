@@ -197,9 +197,9 @@ export default function Main() {
           color="primary"
           aria-label="add"
           className={classes.fab}
+          onClick={() => handleDialogOpen(null)}
         >
-          <AddIcon className={classes.extendedIcon} />
-          새 포스트 작성
+          <AddIcon className={classes.extendedIcon} />새 포스트 작성
         </Fab>
       </main>
       {/* CatPost 생성/수정 시 폼 화면 */}
