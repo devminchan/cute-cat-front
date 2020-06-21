@@ -4,7 +4,7 @@ export const UserContext = createContext({});
 
 function UserProvider(props) {
   const { children } = props;
-  const [user, setUser] = useState({});
+  const [user, setUser] = useState(null);
 
   const value = {
     userState: user,

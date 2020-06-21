@@ -79,6 +79,10 @@ export default function Main() {
     enqueueSnackbar(message, { variant: 'error' });
   };
 
+  const showInfo = (message) => {
+    enqueueSnackbar(message, { variant: 'info' });
+  };
+
   const fetchUserInfo = async () => {
     try {
       const result = (await axios.get('/users/me')).data;
@@ -120,6 +124,11 @@ export default function Main() {
   };
 
   const handleDialogOpen = (catPost) => {
+    if (!userState) {
+      showInfo('로그인 후 이용 가능합니다');
+      return;
+    }
+
     setSelectedPost(catPost);
     setDialogOpen(true);
   };
