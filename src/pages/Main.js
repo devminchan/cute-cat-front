@@ -16,11 +16,18 @@ import Box from '@material-ui/core/Box';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Create';
 import { useSnackbar } from 'notistack';
+import { useHistory } from 'react-router-dom';
 import axios from '../utils/axios';
 import { UserContext } from '../context/UserProvider';
 import PostDialog from '../components/PostDialog';
 
 const useStyles = makeStyles((theme) => ({
+  appbarRoot: {
+    flexGrow: 1,
+  },
+  appTitle: {
+    flexGrow: 1,
+  },
   icon: {
     marginRight: theme.spacing(2),
   },
@@ -63,9 +70,10 @@ export default function Main() {
   const classes = useStyles(); // css 설정 가져오기
   const [posts, setPosts] = useState([]); // CatPost 데이터
   const { enqueueSnackbar } = useSnackbar(); // 스낵바
-  const { setUserState } = useContext(UserContext); // 전역 유저 상태
+  const { userState, setUserState } = useContext(UserContext); // 전역 유저 상태
   const [dialogOpen, setDialogOpen] = useState(false); // PostDialog 열림/닫힘 상태 관리
   const [selectedPost, setSelectedPost] = useState(null); // 현재 선택중인 post 관리
+  const history = useHistory();
 
   const showError = (message) => {
     enqueueSnackbar(message, { variant: 'error' });
@@ -124,6 +132,14 @@ export default function Main() {
     }
   };
 
+  const handleLogin = () => {
+    history.push('/login');
+  };
+
+  const handleLogout = () => {
+    showError('로그아웃!');
+  };
+
   const processing = async () => {
     fetchUserInfo();
     fetchCatPosts();
@@ -137,11 +153,25 @@ export default function Main() {
   return (
     <Fragment>
       <CssBaseline />
-      <AppBar position="relative">
+      <AppBar position="relative" className={classes.appbarRoot}>
         <Toolbar>
-          <Typography variant="h6" color="inherit" noWrap>
+          <Typography
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.appTitle}
+          >
             나만 고양이 없어
           </Typography>
+          {userState ? (
+            <Button color="inherit" onClick={handleLogout}>
+              로그아웃
+            </Button>
+          ) : (
+            <Button color="inherit" onClick={handleLogin}>
+              로그인
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
       <main>
