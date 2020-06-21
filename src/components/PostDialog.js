@@ -122,6 +122,10 @@ function PostDialog({ open, handleClose, catPost }) {
         })
       ).data;
 
+      // 초기화
+      setFileUrl('');
+      setContent('');
+
       showSuccess('업로드 성공');
       handleClose(newPost);
     } catch (e) {
@@ -137,6 +141,13 @@ function PostDialog({ open, handleClose, catPost }) {
         showError(e.message);
       }
     }
+  };
+
+  const handleCloseWithCancel = () => {
+    setFileUrl('');
+    setContent('');
+
+    handleClose(null);
   };
 
   const titleElement = catPost ? (
@@ -199,7 +210,7 @@ function PostDialog({ open, handleClose, catPost }) {
   return (
     <Dialog
       open={open}
-      onClose={handleClose}
+      onClose={handleCloseWithCancel}
       aria-labelledby="form-dialog-title"
     >
       <DialogTitle>{titleElement}</DialogTitle>
@@ -210,7 +221,7 @@ function PostDialog({ open, handleClose, catPost }) {
         {contentElement}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose} color="primary">
+        <Button onClick={handleCloseWithCancel} color="primary">
           취소
         </Button>
         <Button onClick={handleSubmit} color="primary">
