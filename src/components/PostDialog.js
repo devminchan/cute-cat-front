@@ -221,12 +221,18 @@ function PostDialog({ open, handleClose, catPost }) {
         {contentElement}
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleCloseWithCancel} color="primary">
-          취소
-        </Button>
-        <Button onClick={handleSubmit} color="primary">
-          업로드
-        </Button>
+        {catPost ? (
+          ''
+        ) : (
+          <Fragment>
+            <Button onClick={handleCloseWithCancel} color="primary">
+              취소
+            </Button>
+            <Button onClick={handleSubmit} color="primary">
+              업로드
+            </Button>
+          </Fragment>
+        )}
       </DialogActions>
     </Dialog>
   );
