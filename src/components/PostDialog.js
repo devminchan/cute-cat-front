@@ -118,19 +118,34 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
         return;
       }
 
-      // 포스트 생성
-      const newPost = (
-        await axios.post('/cat-posts', {
-          imageUrl: fileUrl,
-          content,
-        })
-      ).data;
+      let newPost = null;
+
+      if (isUpdate) {
+        // 포스트 수정
+        newPost = (
+          await axios.patch(`/cat-posts/${catPost.seqNo}`, {
+            imageUrl: fileUrl,
+            content,
+          })
+        ).data;
+
+        showSuccess('포스트를 수정하였습니다');
+      } else {
+        // 포스트 생성
+        newPost = (
+          await axios.post('/cat-posts', {
+            imageUrl: fileUrl,
+            content,
+          })
+        ).data;
+
+        showSuccess('포스트를 생성하였습니다');
+      }
 
       // 초기화
       setFileUrl('');
       setContent('');
 
-      showSuccess('업로드 성공');
       handleClose(newPost);
     } catch (e) {
       if (e.response) {
@@ -294,7 +309,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
         {contentElement}
       </DialogContent>
       <DialogActions>
-        {catPost ? (
+        {catPost && !isUpdate ? (
           ''
         ) : (
           <Fragment>

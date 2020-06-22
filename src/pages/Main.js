@@ -137,9 +137,22 @@ export default function Main() {
 
   const handleDialogClose = (catPost) => {
     setDialogOpen(false);
+    setIsUpdate(false);
+    setSelectedPost(null);
 
     if (catPost) {
-      setPosts([...posts, catPost]); // Dialog를 통해 새로 생성된 포스트가 있으면 추가
+      if (isUpdate) {
+        const foundPostIndex = posts.findIndex(
+          (p) => p.seqNo === catPost.seqNo,
+        );
+
+        const updatedPosts = posts.slice();
+        updatedPosts.splice(foundPostIndex, 1, catPost);
+
+        setPosts(updatedPosts); // Dialog를 통해 post 업데이트 시 업데이트된 포스트 적용
+      } else {
+        setPosts([...posts, catPost]); // Dialog를 통해 새로 생성된 포스트가 있으면 추가
+      }
     }
   };
 
