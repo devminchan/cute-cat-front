@@ -1,4 +1,10 @@
-import React, { Fragment, useState, useRef, useEffect } from 'react';
+import React, {
+  Fragment,
+  useState,
+  useRef,
+  useEffect,
+  useContext,
+} from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -14,6 +20,7 @@ import { grey } from '@material-ui/core/colors';
 import Typography from '@material-ui/core/Typography';
 import { useSnackbar } from 'notistack';
 import axios from '../utils/axios';
+import { UserContext } from '../context/UserProvider';
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {
@@ -64,6 +71,8 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
   const [content, setContent] = useState('');
 
   const inputRef = useRef(null); // input file에 접근하기 위함
+
+  const { userState } = useContext(UserContext);
 
   const showError = (message) => {
     enqueueSnackbar(message, { variant: 'error' });
@@ -317,7 +326,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
   }
 
   const exportToFacebook =
-    catPost && catPost.user.isAdmin ? (
+    !isUpdate && userState && userState.isAdmin ? (
       <Button onClick={handleFacebookUpload} color="primary">
         페이스북에 업로드
       </Button>
@@ -339,7 +348,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
         {contentElement}
       </DialogContent>
       <DialogActions>
-        {catPost && !isUpdate ? (
+        {catPost ? (
           exportToFacebook
         ) : (
           <Fragment>
