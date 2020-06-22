@@ -57,6 +57,10 @@ const useStyles = makeStyles((theme) => ({
     width: theme.spacing(6),
     height: theme.spacing(6),
   },
+  contentTextField: {
+    width: '100%',
+    marginTop: theme.spacing(2),
+  },
   contentTextArea: {
     width: theme.spacing(48),
     marginTop: theme.spacing(2),
@@ -303,7 +307,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
           multiline
           rows={4}
           placeholder="사진에 대한 설명을 해주세요!"
-          className={classes.contentTextArea}
+          className={classes.contentTextField}
           onChange={handleInputContent}
           value={content}
         />
@@ -323,7 +327,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
         multiline
         rows={4}
         placeholder="사진에 대한 설명을 해주세요!"
-        className={classes.contentTextArea}
+        className={classes.contentTextField}
         onChange={handleInputContent}
         value={content}
       />
