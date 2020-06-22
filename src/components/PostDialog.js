@@ -307,6 +307,9 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
       contentElement = (
         <DialogContentText className={classes.contentTextArea}>
           {catPost.content}
+          <Box className={classes.contentTextArea}>
+            {catPost && catPost.postUrl ? catPost.postUrl : ''}
+          </Box>
         </DialogContentText>
       );
     }
@@ -326,13 +329,34 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
   }
 
   const exportToFacebook =
-    !isUpdate && userState && userState.isAdmin ? (
+    !isUpdate &&
+    catPost &&
+    !catPost.postUrl &&
+    userState &&
+    userState.isAdmin ? (
       <Button onClick={handleFacebookUpload} color="primary">
         페이스북에 업로드
       </Button>
     ) : (
       ''
     );
+
+  let buttonElement = null;
+
+  if (catPost && !isUpdate) {
+    buttonElement = exportToFacebook;
+  } else {
+    buttonElement = (
+      <Fragment>
+        <Button onClick={handleCloseWithCancel} color="primary">
+          취소
+        </Button>
+        <Button onClick={handleSubmit} color="primary">
+          업로드
+        </Button>
+      </Fragment>
+    );
+  }
 
   return (
     <Dialog
@@ -347,20 +371,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
         </Paper>
         {contentElement}
       </DialogContent>
-      <DialogActions>
-        {catPost ? (
-          exportToFacebook
-        ) : (
-          <Fragment>
-            <Button onClick={handleCloseWithCancel} color="primary">
-              취소
-            </Button>
-            <Button onClick={handleSubmit} color="primary">
-              업로드
-            </Button>
-          </Fragment>
-        )}
-      </DialogActions>
+      <DialogActions>{buttonElement}</DialogActions>
     </Dialog>
   );
 }
