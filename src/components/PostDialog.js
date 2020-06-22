@@ -58,9 +58,10 @@ const useStyles = makeStyles((theme) => ({
     height: theme.spacing(6),
   },
   contentTextArea: {
-    width: '100%',
-    maxWidth: theme.spacing(48),
+    width: theme.spacing(48),
     marginTop: theme.spacing(2),
+    display: 'block',
+    wordWrap: 'break-word',
   },
   link: {
     fontSize: '0.8em',
@@ -310,7 +311,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
     } else {
       contentElement = (
         <DialogContentText className={classes.contentTextArea}>
-          <Typography> {catPost.content} </Typography>
+          {catPost.content}
         </DialogContentText>
       );
     }
