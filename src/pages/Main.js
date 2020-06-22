@@ -295,7 +295,7 @@ export default function Main() {
                     >
                       View
                     </Button>
-                    {userState.seqNo === catPost.user.seqNo ? (
+                    {(userState && userState.seqNo === catPost.user.seqNo) ? (
                       <Fragment>
                         <Button
                           size="small"
