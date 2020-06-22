@@ -20,6 +20,7 @@ import { useHistory } from 'react-router-dom';
 import axios, { TOKEN_NAME } from '../utils/axios';
 import { UserContext } from '../context/UserProvider';
 import PostDialog from '../components/PostDialog';
+import RemoveDialog from '../components/RemoveDialog';
 
 const useStyles = makeStyles((theme) => ({
   appbarRoot: {
@@ -73,6 +74,8 @@ export default function Main() {
   const { userState, setUserState } = useContext(UserContext); // 전역 유저 상태
   const [dialogOpen, setDialogOpen] = useState(false); // PostDialog 열림/닫힘 상태 관리
   const [selectedPost, setSelectedPost] = useState(null); // 현재 선택중인 post 관리
+  const [removeDialogOpen, setRemoveDialogOpen] = useState(false); // PostDialog 열림/닫힘 상태 관리
+  const [willRemovePost, setWillRemovePost] = useState(null); // 현재 선택중인 post 관리
   const [isUpdate, setIsUpdate] = useState(false); // 현재 선택중인 post update 모드 관리
   const history = useHistory();
 
@@ -82,6 +85,10 @@ export default function Main() {
 
   const showInfo = (message) => {
     enqueueSnackbar(message, { variant: 'info' });
+  };
+
+  const showSuccess = (message) => {
+    enqueueSnackbar(message, { variant: 'success' });
   };
 
   const fetchUserInfo = async () => {
@@ -137,8 +144,6 @@ export default function Main() {
 
   const handleDialogClose = (catPost) => {
     setDialogOpen(false);
-    setIsUpdate(false);
-    setSelectedPost(null);
 
     if (catPost) {
       if (isUpdate) {
@@ -153,6 +158,51 @@ export default function Main() {
       } else {
         setPosts([...posts, catPost]); // Dialog를 통해 새로 생성된 포스트가 있으면 추가
       }
+    }
+
+    // Dialog가 Close 되기전에 초기화시 props가 전달되어 레이아웃이 바뀌는 현상 발생
+    setIsUpdate(false);
+    setSelectedPost(null);
+  };
+
+  const handleRemoveDialogOpen = (catPost) => {
+    setWillRemovePost(catPost);
+    setRemoveDialogOpen(true);
+  };
+
+  const handleRemoveDialogClose = () => {
+    setWillRemovePost(null);
+    setRemoveDialogOpen(false);
+  };
+
+  const handleRemovePost = async (catPost) => {
+    try {
+      await axios.delete(`/cat-posts/${catPost.seqNo}`);
+
+      const foundPostIndex = posts.findIndex((p) => p.seqNo === catPost.seqNo);
+
+      const updatedPosts = posts.slice();
+      updatedPosts.splice(foundPostIndex, 1);
+
+      setPosts(updatedPosts); // 업데이트된 포스트 적용
+
+      showSuccess('선택한 포스트를 삭제하였습니다');
+    } catch (error) {
+      if (error.response) {
+        if (error.response.status !== 401) {
+          const errMsg = error.response.data.message;
+
+          if (Array.isArray(errMsg)) {
+            showError(errMsg[0]);
+          } else {
+            showError(errMsg);
+          }
+        }
+      } else {
+        showError('삭제 도중 오류가 발생하였습니다');
+      }
+    } finally {
+      handleRemoveDialogClose();
     }
   };
 
@@ -240,21 +290,32 @@ export default function Main() {
                       size="small"
                       color="primary"
                       onClick={() => {
-                        handleDialogOpen(catPost);
+                        handleDialogOpen(catPost, false);
                       }}
                     >
                       View
                     </Button>
                     {userState.seqNo === catPost.user.seqNo ? (
-                      <Button
-                        size="small"
-                        color="primary"
-                        onClick={() => {
-                          handleDialogOpen(catPost, true);
-                        }}
-                      >
-                        Edit
-                      </Button>
+                      <Fragment>
+                        <Button
+                          size="small"
+                          color="primary"
+                          onClick={() => {
+                            handleDialogOpen(catPost, true);
+                          }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="small"
+                          color="secondary"
+                          onClick={() => {
+                            handleRemoveDialogOpen(catPost);
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      </Fragment>
                     ) : (
                       ''
                     )}
@@ -269,7 +330,7 @@ export default function Main() {
           color="primary"
           aria-label="add"
           className={classes.fab}
-          onClick={() => handleDialogOpen(null)}
+          onClick={() => handleDialogOpen(null, false)}
         >
           <AddIcon className={classes.extendedIcon} />새 포스트 작성
         </Fab>
@@ -280,6 +341,12 @@ export default function Main() {
         handleClose={handleDialogClose}
         catPost={selectedPost}
         isUpdate={isUpdate}
+      />
+      <RemoveDialog
+        open={removeDialogOpen}
+        handleClose={handleRemoveDialogClose}
+        handleDelete={handleRemovePost}
+        catPost={willRemovePost}
       />
     </Fragment>
   );

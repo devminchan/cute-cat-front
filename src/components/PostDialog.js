@@ -165,7 +165,6 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
   const handleCloseWithCancel = () => {
     setFileUrl('');
     setContent('');
-
     handleClose(null);
   };
 
