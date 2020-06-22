@@ -17,10 +17,13 @@ import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Create';
 import { useSnackbar } from 'notistack';
 import { useHistory } from 'react-router-dom';
+import { promisify } from 'util';
 import axios, { TOKEN_NAME } from '../utils/axios';
 import { UserContext } from '../context/UserProvider';
 import PostDialog from '../components/PostDialog';
 import RemoveDialog from '../components/RemoveDialog';
+
+const sleep = promisify(setTimeout);
 
 const useStyles = makeStyles((theme) => ({
   appbarRoot: {
@@ -142,7 +145,7 @@ export default function Main() {
     setDialogOpen(true);
   };
 
-  const handleDialogClose = (catPost, isPublished = false) => {
+  const handleDialogClose = async (catPost, isPublished = false) => {
     setDialogOpen(false);
 
     if (catPost) {
@@ -161,6 +164,8 @@ export default function Main() {
     }
 
     // Dialog가 Close 되기전에 초기화시 props가 전달되어 레이아웃이 바뀌는 현상 발생
+    // to promise
+    await sleep(100);
     setIsUpdate(false);
     setSelectedPost(null);
   };
@@ -295,7 +300,7 @@ export default function Main() {
                     >
                       View
                     </Button>
-                    {(userState && userState.seqNo === catPost.user.seqNo) ? (
+                    {userState && userState.seqNo === catPost.user.seqNo ? (
                       <Fragment>
                         <Button
                           size="small"
