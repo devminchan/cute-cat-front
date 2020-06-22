@@ -62,6 +62,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: theme.spacing(48),
     marginTop: theme.spacing(2),
   },
+  link: {
+    fontSize: '0.8em',
+  },
 }));
 
 function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
@@ -307,14 +310,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
     } else {
       contentElement = (
         <DialogContentText className={classes.contentTextArea}>
-          <Typography style={{ display: 'inline-block' }}>
-            {' '}
-            {catPost.content}{' '}
-          </Typography>
-          <Typography style={{ display: 'inline-block' }}>
-            {' '}
-            {catPost && catPost.postUrl ? catPost.postUrl : ''}
-          </Typography>
+          <Typography> {catPost.content} </Typography>
         </DialogContentText>
       );
     }
@@ -333,23 +329,25 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
     );
   }
 
-  const exportToFacebook =
-    !isUpdate &&
-    catPost &&
-    !catPost.postUrl &&
-    userState &&
-    userState.isAdmin ? (
-      <Button onClick={handleFacebookUpload} color="primary">
-        페이스북에 업로드
-      </Button>
-    ) : (
-      ''
-    );
-
   let buttonElement = null;
 
   if (catPost && !isUpdate) {
-    buttonElement = exportToFacebook;
+    if (catPost.postUrl) {
+      buttonElement = (
+        <a href={catPost.postUrl}>
+          <Button color="primary">페이스북 게시물 바로가기</Button>
+        </a>
+      );
+    } else {
+      buttonElement =
+        userState && userState.isAdmin ? (
+          <Button onClick={handleFacebookUpload} color="primary">
+            페이스북에 업로드
+          </Button>
+        ) : (
+          ''
+        );
+    }
   } else {
     buttonElement = (
       <Fragment>
