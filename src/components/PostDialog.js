@@ -168,6 +168,28 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
     handleClose(null);
   };
 
+  const handleFacebookUpload = async () => {
+    try {
+      const result = (await axios.patch(`/cat-posts/${catPost.seqNo}/publish`))
+        .data;
+
+      showSuccess(`페이스북 업로드에 성공하였습니다. ${result.postUrl}`);
+      handleClose(result, true);
+    } catch (e) {
+      if (e.response) {
+        const errMsg = e.response.data.message;
+
+        if (Array.isArray(errMsg)) {
+          showError(errMsg[0]);
+        } else {
+          showError(errMsg);
+        }
+      } else {
+        showError(e.message);
+      }
+    }
+  };
+
   useEffect(() => {
     if (catPost && isUpdate) {
       setFileUrl(catPost.imageUrl);
@@ -294,6 +316,15 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
     );
   }
 
+  const exportToFacebook =
+    catPost && catPost.user.isAdmin ? (
+      <Button onClick={handleFacebookUpload} color="primary">
+        페이스북에 업로드
+      </Button>
+    ) : (
+      ''
+    );
+
   return (
     <Dialog
       open={open}
@@ -309,7 +340,7 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
       </DialogContent>
       <DialogActions>
         {catPost && !isUpdate ? (
-          ''
+          exportToFacebook
         ) : (
           <Fragment>
             <Button onClick={handleCloseWithCancel} color="primary">

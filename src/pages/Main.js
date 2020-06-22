@@ -142,11 +142,11 @@ export default function Main() {
     setDialogOpen(true);
   };
 
-  const handleDialogClose = (catPost) => {
+  const handleDialogClose = (catPost, isPublished = false) => {
     setDialogOpen(false);
 
     if (catPost) {
-      if (isUpdate) {
+      if (isUpdate || isPublished) {
         const foundPostIndex = posts.findIndex(
           (p) => p.seqNo === catPost.seqNo,
         );
