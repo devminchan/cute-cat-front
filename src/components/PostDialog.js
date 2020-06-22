@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useRef } from 'react';
+import React, { Fragment, useState, useRef, useEffect } from 'react';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -23,6 +23,10 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  imageBox: {
+    width: '100%',
+    height: '100%',
   },
   image: {
     objectFit: 'cover',
@@ -52,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function PostDialog({ open, handleClose, catPost }) {
+function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
   const classes = useStyles();
   const { enqueueSnackbar } = useSnackbar();
 
@@ -150,33 +154,45 @@ function PostDialog({ open, handleClose, catPost }) {
     handleClose(null);
   };
 
-  const titleElement = catPost ? (
-    <Box display="flex" flexDirection="row" alignItems="center">
-      <Avatar alt={catPost.user.userId} className={classes.cardAvator}>
-        {catPost.user.userId.length > 0 ? catPost.user.userId[0] : 'unknown'}
-      </Avatar>
-      <Box ml={1.2}>
-        <Typography>{catPost.user.userId}</Typography>
-      </Box>
-    </Box>
-  ) : (
-    '새 포스트 작성'
-  );
+  useEffect(() => {
+    if (catPost && isUpdate) {
+      setFileUrl(catPost.imageUrl);
+      setContent(catPost.content);
+    }
+  }, [open]);
 
-  const imageElement = catPost ? (
-    <img alt="커여운 고양이" src={catPost.imageUrl} className={classes.image} />
-  ) : (
-    <Fragment>
-      {fileUrl ? (
-        <img alt="커여운 고양이" src={fileUrl} className={classes.image} />
-      ) : (
+  let titleElement = null;
+
+  if (catPost) {
+    if (isUpdate) {
+      titleElement = '포스트 수정';
+    } else {
+      titleElement = (
+        <Box display="flex" flexDirection="row" alignItems="center">
+          <Avatar alt={catPost.user.userId} className={classes.cardAvator}>
+            {catPost.user.userId.length > 0
+              ? catPost.user.userId[0]
+              : 'unknown'}
+          </Avatar>
+          <Box ml={1.2}>
+            <Typography>{catPost.user.userId}</Typography>
+          </Box>
+        </Box>
+      );
+    }
+  } else {
+    titleElement = '새 포스트 작성';
+  }
+
+  let imageElement = null;
+
+  if (catPost) {
+    if (isUpdate) {
+      imageElement = (
         <Fragment>
-          <IconButton
-            className={classes.uploadButton}
-            onClick={handleFileSelect}
-          >
-            <AddIcon className={classes.addIcon} style={{ color: grey[500] }} />
-          </IconButton>
+          <Box onClick={handleFileSelect} className={classes.imageBox}>
+            <img alt="커여운 고양이" src={fileUrl} className={classes.image} />
+          </Box>
           <input
             type="file"
             name="image"
@@ -186,26 +202,83 @@ function PostDialog({ open, handleClose, catPost }) {
             ref={inputRef}
           />
         </Fragment>
-      )}
-    </Fragment>
-  );
+      );
+    } else {
+      imageElement = (
+        <img
+          alt="커여운 고양이"
+          src={catPost.imageUrl}
+          className={classes.image}
+        />
+      );
+    }
+  } else {
+    imageElement = (
+      <Fragment>
+        {fileUrl ? (
+          <img alt="커여운 고양이" src={fileUrl} className={classes.image} />
+        ) : (
+          <Fragment>
+            <IconButton
+              className={classes.uploadButton}
+              onClick={handleFileSelect}
+            >
+              <AddIcon
+                className={classes.addIcon}
+                style={{ color: grey[500] }}
+              />
+            </IconButton>
+            <input
+              type="file"
+              name="image"
+              onChange={handleFileUpload}
+              accept="image/*"
+              hidden="true"
+              ref={inputRef}
+            />
+          </Fragment>
+        )}
+      </Fragment>
+    );
+  }
 
-  const contentElement = catPost ? (
-    <DialogContentText className={classes.contentTextArea}>
-      {catPost.content}
-    </DialogContentText>
-  ) : (
-    <TextField
-      id="standard-multiline-static"
-      label="사진 설명"
-      multiline
-      rows={4}
-      placeholder="사진에 대한 설명을 해주세요!"
-      className={classes.contentTextArea}
-      onChange={handleInputContent}
-      value={content}
-    />
-  );
+  let contentElement = null;
+
+  if (catPost) {
+    if (isUpdate) {
+      contentElement = (
+        <TextField
+          id="standard-multiline-static"
+          label="사진 설명"
+          multiline
+          rows={4}
+          placeholder="사진에 대한 설명을 해주세요!"
+          className={classes.contentTextArea}
+          onChange={handleInputContent}
+          value={content}
+        />
+      );
+    } else {
+      contentElement = (
+        <DialogContentText className={classes.contentTextArea}>
+          {catPost.content}
+        </DialogContentText>
+      );
+    }
+  } else {
+    contentElement = (
+      <TextField
+        id="standard-multiline-static"
+        label="사진 설명"
+        multiline
+        rows={4}
+        placeholder="사진에 대한 설명을 해주세요!"
+        className={classes.contentTextArea}
+        onChange={handleInputContent}
+        value={content}
+      />
+    );
+  }
 
   return (
     <Dialog

@@ -73,6 +73,7 @@ export default function Main() {
   const { userState, setUserState } = useContext(UserContext); // 전역 유저 상태
   const [dialogOpen, setDialogOpen] = useState(false); // PostDialog 열림/닫힘 상태 관리
   const [selectedPost, setSelectedPost] = useState(null); // 현재 선택중인 post 관리
+  const [isUpdate, setIsUpdate] = useState(false); // 현재 선택중인 post update 모드 관리
   const history = useHistory();
 
   const showError = (message) => {
@@ -123,12 +124,13 @@ export default function Main() {
     }
   };
 
-  const handleDialogOpen = (catPost) => {
+  const handleDialogOpen = (catPost, updateMode) => {
     if (!userState) {
       showInfo('로그인 후 이용 가능합니다');
       return;
     }
 
+    setIsUpdate(updateMode);
     setSelectedPost(catPost);
     setDialogOpen(true);
   };
@@ -230,7 +232,13 @@ export default function Main() {
                     >
                       View
                     </Button>
-                    <Button size="small" color="primary">
+                    <Button
+                      size="small"
+                      color="primary"
+                      onClick={() => {
+                        handleDialogOpen(catPost, true);
+                      }}
+                    >
                       Edit
                     </Button>
                   </CardActions>
@@ -254,6 +262,7 @@ export default function Main() {
         open={dialogOpen}
         handleClose={handleDialogClose}
         catPost={selectedPost}
+        isUpdate={isUpdate}
       />
     </Fragment>
   );
