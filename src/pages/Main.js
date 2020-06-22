@@ -232,15 +232,19 @@ export default function Main() {
                     >
                       View
                     </Button>
-                    <Button
-                      size="small"
-                      color="primary"
-                      onClick={() => {
-                        handleDialogOpen(catPost, true);
-                      }}
-                    >
-                      Edit
-                    </Button>
+                    {userState.seqNo === catPost.user.seqNo ? (
+                      <Button
+                        size="small"
+                        color="primary"
+                        onClick={() => {
+                          handleDialogOpen(catPost, true);
+                        }}
+                      >
+                        Edit
+                      </Button>
+                    ) : (
+                      ''
+                    )}
                   </CardActions>
                 </Card>
               </Grid>
