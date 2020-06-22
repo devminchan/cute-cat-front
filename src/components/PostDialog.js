@@ -59,6 +59,7 @@ const useStyles = makeStyles((theme) => ({
   },
   contentTextArea: {
     width: '100%',
+    maxWidth: theme.spacing(48),
     marginTop: theme.spacing(2),
   },
 }));
@@ -306,10 +307,14 @@ function PostDialog({ open, handleClose, catPost, isUpdate = false }) {
     } else {
       contentElement = (
         <DialogContentText className={classes.contentTextArea}>
-          {catPost.content}
-          <Box className={classes.contentTextArea}>
+          <Typography style={{ display: 'inline-block' }}>
+            {' '}
+            {catPost.content}{' '}
+          </Typography>
+          <Typography style={{ display: 'inline-block' }}>
+            {' '}
             {catPost && catPost.postUrl ? catPost.postUrl : ''}
-          </Box>
+          </Typography>
         </DialogContentText>
       );
     }

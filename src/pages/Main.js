@@ -283,7 +283,7 @@ export default function Main() {
                         {catPost.user.userId}
                       </Box>
                     </Box>
-                    <Typography>{catPost.content}</Typography>
+                    <Typography noWrap>{catPost.content}</Typography>
                   </CardContent>
                   <CardActions>
                     <Button
